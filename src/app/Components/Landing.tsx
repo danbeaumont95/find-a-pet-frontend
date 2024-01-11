@@ -87,8 +87,9 @@ export default function Landing() {
         alignItems={'center'}
         className="flex_right"
         >
-   {isMobile ? null :   <Box style={{ position: 'relative' }} height={'80%'} width={isMobile ? '100%': '100%'}>
-        <Box width={isMobile ? undefined : 800} height={isMobile ? undefined : 800}>
+        {isMobile ? null :   
+        <Box style={{ position: 'relative' }} height={'80%'} width={isMobile ? '100%': '100%'}>
+          <Box width={isMobile ? undefined : 800} height={isMobile ? undefined : 800}>
 
             <Image
               src="/catdog-removebg.png"
@@ -99,7 +100,7 @@ export default function Landing() {
               title="Cat and dog"
             />
         </Box>
-          </Box>}
+      </Box>}
         </Box>
         </Box>
       </Flex>

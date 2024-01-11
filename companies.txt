@@ -1,0 +1,12 @@
+'''
+# target URL
+gables_url = "https://www.gablesfarm.org.uk/dogalogue/"
+# url = "https://www.instagram.com/danbeaumont95/"
+bluecross_url = "https://www.bluecross.org.uk/rehome/dog"
+# blue cross list of dogs is on class grid grid-cols-1 sm:grid-cols-3 gap-2
+pro_dogs_direct_url = "https://prodogsdirect.org.uk/dogs-for-adoption/"
+# pro dogs list is in articles, all but first or by class that includes category-dogs
+
+# aireworth_url = "https://www.aireworthdogsinneed.co.uk/dogs-in-need/"
+yorkshire_rose_url = "https://yrdr.co.uk/dogs-needing-a-home/"
+'''
