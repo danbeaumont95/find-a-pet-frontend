@@ -33,17 +33,19 @@ export default function SignUpForm({handleTypeChange}: {handleTypeChange: () => 
     lastName: '',
     phone_number: '',
     email: '',
-    password: '',
-    password_confirm: '',
+    password1: '',
+    password2: '',
   });
   const [errors, setErrors] = useState({
     firstName: [],
     lastName: [],
     phone_number: [],
     email: [],
-    password: [],
+    password1: [],
+    password2: [],
   })
   const [successFullSignUp, setSuccessFullSignUp] = useState(false)
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prevData) => ({
@@ -71,11 +73,11 @@ export default function SignUpForm({handleTypeChange}: {handleTypeChange: () => 
         })
       }
       else {
-        const errorKeys = Object.keys(res);
+        const errorKeys = Object.keys(res['Error']);
         errorKeys.forEach((el) => {
           setErrors((prevState) => ({
             ...prevState,
-            [el]: res[el]
+            [el]: res['Error'][el]
           }))
         })
         Object.keys(formData).forEach((el) => {
@@ -87,18 +89,21 @@ export default function SignUpForm({handleTypeChange}: {handleTypeChange: () => 
           }
         })
       }
-    }).catch((er) => {
-      toast({
-        title: `Error! Unable to register user. Please try again later.`,
-        status: 'error',
-        isClosable: true,
-        position: 'top'
-      })
+    }).catch(() => {
+        toast({
+          title: `Error! Unable to register user. Please try again later.`,
+          status: 'error',
+          isClosable: true,
+          position: 'top'
+        })
     })
   }
 
   const signUpButtonDisabled = () => {
-    return formData.password.length === 0 || formData.password_confirm.length === 0 || formData.password !== formData.password_confirm
+    const emptyPassword = formData.password1.length === 0;
+    const emptyConfirmPassword = formData.password2.length === 0;
+    const passwordIsNotPasswordConfirm = formData.password1 !== formData.password2;
+    return emptyPassword || emptyConfirmPassword || passwordIsNotPasswordConfirm
   }
 
   return (
@@ -131,7 +136,7 @@ export default function SignUpForm({handleTypeChange}: {handleTypeChange: () => 
           <FormErrorMessage>{errors['phone_number'].join(' ')}</FormErrorMessage>
         </FormControl>
         <FormInput name='Email address' id='email' isRequired handleChange={handleInputChange}  isInvalid={Boolean(errors['email'].length)} errors={errors['email']}/>
-      <FormControl id="password" isRequired isInvalid={Boolean(errors['password'].length)}>
+      <FormControl id="password1" isRequired isInvalid={Boolean(errors['password1'].length) || Boolean(errors['password2'].length)}>
         <FormLabel>Password</FormLabel>
         <InputGroup>
           <Input _focusVisible={{ border: '2px solid #0F7173 '}} type={showPassword ? 'text' : 'password'} onChange={handleInputChange}/>
@@ -145,9 +150,9 @@ export default function SignUpForm({handleTypeChange}: {handleTypeChange: () => 
             </Button>
           </InputRightElement>
         </InputGroup>
-        <FormErrorMessage>{errors['password'].join(' ')}</FormErrorMessage>
+        <FormErrorMessage>{errors['password1'].join(' ') || errors['password2'].join(' ')}</FormErrorMessage>
       </FormControl>
-      <FormControl id="password_confirm" isRequired isInvalid={Boolean(errors['password'].length)}>
+      <FormControl id="password2" isRequired isInvalid={Boolean(errors['password1'].length) || Boolean(errors['password2'].length)}>
         <FormLabel>Confirm password</FormLabel>
         <InputGroup>
           <Input _focusVisible={{ border: '2px solid #0F7173 '}} type={showPasswordConfirm ? 'text' : 'password'} onChange={handleInputChange}/>
@@ -162,7 +167,7 @@ export default function SignUpForm({handleTypeChange}: {handleTypeChange: () => 
           </InputRightElement>
 
         </InputGroup>
-        <FormErrorMessage>{errors['password'].join(' ')}</FormErrorMessage>
+        <FormErrorMessage>{errors['password1'].join(' ') || errors['password2'].join(' ')}</FormErrorMessage>
       </FormControl>
       <Stack spacing={10} pt={2}>
         <Button

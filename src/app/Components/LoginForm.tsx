@@ -12,13 +12,74 @@ import {
   Text,
   useColorModeValue,
   Link,
+  useToast
 } from '@chakra-ui/react'
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
+import FormInput from './UI/FormInput';
 
 export default function LoginForm({ handleTypeChange }: { handleTypeChange: () => void }) {
+  const toast = useToast()
   const [showPassword, setShowPassword] = useState(false)
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+  const [errors, setErrors] = useState({
+    email: [],
+    password: [],
+  })
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [id]: value,
+    }));
+  };
+
+   async function loginUser(formData: any) {
+    const response = await fetch(`http://127.0.0.1:8000/find_a_pet/user_login/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ formData }),
+    });
+    const result = await response.json();
+    return result;
+  }
+  
+  
+  const loginCalled  = async () => {
+    loginUser(formData)
+      .then((res) => {
+        if (res.Error) {
+          toast({
+            title: `Error! Invalid details. Please try again.`,
+            status: 'error',
+            isClosable: true,
+            position: 'top'
+          })
+        }
+        else {
+          toast({
+            title: `Success! You will now be logged in.`,
+            status: 'success',
+            isClosable: true,
+            position: 'top'
+          })
+        }
+      })
+      .catch((err: any) => {
+        toast({
+          title: `Error! Unable to login user. Please try again later.`,
+          status: 'error',
+          isClosable: true,
+          position: 'top'
+        })      
+      })
+  }
   return (
     <Box
       rounded={'lg'}
@@ -26,21 +87,15 @@ export default function LoginForm({ handleTypeChange }: { handleTypeChange: () =
       boxShadow={'lg'}
       p={8}>
       <Stack spacing={4}>
-        <FormControl id="email" isRequired>
-          <FormLabel>Email address</FormLabel>
-          <Input
-            _focusVisible={{ border: '2px solid #0F7173 '}}
-            type="email"
-            width="100%"
-            style={{ minWidth: '300px', wordWrap: 'break-word' }}
-          />
-        </FormControl>
+        <FormInput name='Email address' id='email' isRequired handleChange={handleInputChange}  isInvalid={Boolean(errors['email'].length)} errors={errors['email']}/>
+
         <FormControl id="password" isRequired>
           <FormLabel>Password</FormLabel>
           <InputGroup>
             <Input
               _focusVisible={{ border: '2px solid #0F7173 '}}
               type={showPassword ? 'text' : 'password'}
+              onChange={handleInputChange}
               width="100%"
               style={{ minWidth: '300px' }}
             />
@@ -62,7 +117,9 @@ export default function LoginForm({ handleTypeChange }: { handleTypeChange: () =
             color={'white'}
             _hover={{
               bg: 'blue.500',
-            }}>
+            }}
+            onClick={loginCalled}
+            >
             Log in
           </Button>
         </Stack>
